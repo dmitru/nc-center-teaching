@@ -1,0 +1,8 @@
+CREATE DATABASE visits_counter;
+USE visits_counter;
+
+DROP TABLE VISITS;
+CREATE TABLE VISITS 
+(id INT PRIMARY KEY AUTO_INCREMENT,
+ date_log TIMESTAMP);
+ 
