@@ -100,8 +100,6 @@ public class WorkerManagerTest {
         
         workerManager.saveAllWorkers(Arrays.asList(manager, worker1, worker2, lowestWorker));
         
-        EntityManager em = PersistenceUtil.getEntityManager();
-        
         List<Worker> result = manager.getSubordinates();
         List<Worker> expected = Arrays.asList(new Worker[] {worker1, worker2});
         assertEquals(new HashSet<>(expected), new HashSet<>(result));

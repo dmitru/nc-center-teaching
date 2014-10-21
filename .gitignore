@@ -1,1 +1,4 @@
 *.class
+/JpaExampleWorkers/nbproject/private/
+/JpaExampleWorkers/build/
+/JpaExampleWorkers/dist/
