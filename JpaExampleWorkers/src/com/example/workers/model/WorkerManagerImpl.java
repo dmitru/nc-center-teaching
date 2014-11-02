@@ -28,6 +28,7 @@ public class WorkerManagerImpl implements WorkerManager {
         logger.debug("getAllWorkers() is called");
         
         EntityManager em = PersistenceUtil.getEntityManager();
+        em.clear();
         Query q = em.createQuery("select w from Worker w");
         List<Worker> result = q.getResultList();
         return result;
@@ -39,11 +40,16 @@ public class WorkerManagerImpl implements WorkerManager {
         
         // Creating transactions manually with EntityManager
         EntityManager em = PersistenceUtil.getEntityManager();
-        em.getTransaction().begin();
-        em.persist(worker);
-        em.getTransaction().commit();
+        try {
+            em.getTransaction().begin();
+            em.persist(worker);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+        }
         em.refresh(worker);
-        em.clear();
     }
 
     @Override
@@ -51,16 +57,22 @@ public class WorkerManagerImpl implements WorkerManager {
         logger.debug("saveWorker() is called");
         
         EntityManager em = PersistenceUtil.getEntityManager();
-        em.getTransaction().begin();
-        workers.stream().forEach(worker -> em.persist(worker));
-        em.getTransaction().commit();
+        try {
+            em.getTransaction().begin();
+            workers.stream().forEach(worker -> em.persist(worker));
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+        }
         workers.stream().forEach(worker -> em.refresh(worker));
-        em.clear();
     }
     
     @Override
     public Worker getWorker(Long id) {
         EntityManager em = PersistenceUtil.getEntityManager();
+        em.clear();
         return em.find(Worker.class, id);
     }
 
@@ -69,10 +81,15 @@ public class WorkerManagerImpl implements WorkerManager {
         logger.debug("clearAllWorkers() is called");
         
         EntityManager em = PersistenceUtil.getEntityManager();
-        em.getTransaction().begin();
-        getAllWorkers().forEach(worker -> em.remove(worker));
-        em.getTransaction().commit();
-        em.clear();
+        try {
+            em.getTransaction().begin();
+            getAllWorkers().forEach(worker -> em.remove(worker));
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+        }
     }
 
     @Override
@@ -80,10 +97,15 @@ public class WorkerManagerImpl implements WorkerManager {
         logger.debug("deleteWorker() is called for worker: " + worker);
         
         EntityManager em = PersistenceUtil.getEntityManager();
-        em.getTransaction().begin();
-        em.remove(worker);
-        em.getTransaction().commit();
-        em.clear();
+        try {
+            em.getTransaction().begin();
+            em.remove(worker);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+        }
     }
 
     @Override

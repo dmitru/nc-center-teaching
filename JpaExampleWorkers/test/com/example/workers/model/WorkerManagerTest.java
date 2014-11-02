@@ -79,12 +79,14 @@ public class WorkerManagerTest {
         List<Worker> expected = Arrays.asList(new Worker[] {w1, w2});
         assertEquals(new HashSet<>(result), new HashSet<>(expected));
         
+        w2 = workerManager.getWorker(w2.getId());
         workerManager.deleteWorker(w2);
         
         result = workerManager.getAllWorkers();
         expected = Arrays.asList(new Worker[] {w1});
-        assertEquals(new HashSet<>(result), new HashSet<>(expected));
+        assertEquals(new HashSet<>(expected), new HashSet<>(result));
         
+        w1 = workerManager.getWorker(w1.getId());
         workerManager.deleteWorker(w1);
         
         result = workerManager.getAllWorkers();
