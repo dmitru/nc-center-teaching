@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Forum" default="all" basedir=".">
+    <description>Example of how to build and run junit tests with Ant scripts</description>
+    
+    <!-- Need to change this to match your environment -->
+    <property name="deploy.dir" location="C:\Program Files\Apache Software Foundation\Tomcat 8.0\webapps"/>
+    
+    <property name='app.name' value='${ant.project.name}'/>
+    <property name="src.conf" location="src/conf"/>
+    <property name="src.java" location="src/java"/>
+    <property name="src.web" location="web"/>
+    <property name="build" location="build"/>
+    <property name="dist" location="dist"/>
+    <property name="lib" location="lib"/>
+    
+    <property environment="env"/>
+    
+    <path id="libs">
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${env.CATALINA_HOME}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="all">
+    </target>
+    
+    <target name="clean"
+            description="remove build directory">
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+    </target>
+    
+    <target name="mkdirs">
+        <mkdir dir="${build}"/>
+        <mkdir dir="${dist}"/>
+    </target>
+    
+    <target name="compile" depends="mkdirs"
+            description="compile the sources">
+        <echo>${env.CATALINA_HOME}</echo>
+        <javac srcdir="${src.java}" destdir="${build}">
+            <classpath refid="libs"/>
+        </javac>
+    </target>
+    
+    <target name="war" depends="compile">
+        <war destFile='${dist}/${app.name}.war' webxml='${src.web}/WEB-INF/web.xml'>  
+          <classes dir='${build}'/>   
+          <zipfileset dir='${lib}' includes='*.jar' prefix='WEB-INF/lib' />  
+          <fileset dir='${src.web}' excludes='WEB-INF/web.xml' />   
+        </war>  
+    </target>
+    
+    <target name="deploy" depends="war">
+        <fail unless='deploy.dir' message='You must define property deploy.dir to tun this task' />  
+        <!--<delete verbose='true' dir='${deploy.dir}/${app.name}'/>  -->
+        <delete verbose='true' file='${deploy.dir}/${app.name}.war' />  
+        <copy todir='${deploy.dir}' file='${dist}/${app.name}.war'/>  
+    </target>
+   
+</project>

@@ -1,0 +1,31 @@
+DROP DATABASE forum;
+CREATE DATABASE forum;
+USE forum;
+CREATE TABLE groups (
+id INT AUTO_INCREMENT,
+name TEXT NOT NULL,
+parent_id INT,
+PRIMARY KEY(id)
+);
+
+INSERT INTO groups (id, name)
+VALUES (1, "Home");
+
+CREATE TABLE topics (
+id INT AUTO_INCREMENT,
+name TEXT NOT NULL,
+group_id INT,
+PRIMARY KEY(id),
+FOREIGN KEY(group_id) REFERENCES groups(id)
+);
+
+CREATE TABLE messages (
+id INT AUTO_INCREMENT,
+text TEXT NOT NULL,
+author TEXT NOT NULL,
+date TIMESTAMP NOT NULL,
+topic_id INT,
+PRIMARY KEY (id),
+FOREIGN KEY (topic_id) REFERENCES topics(id)
+);	
+

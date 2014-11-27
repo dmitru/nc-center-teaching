@@ -1,0 +1,4 @@
+You'll need to have these variables set:
+JAVA_HOME -> path to java jdk
+ANT_HOME -> path to ant
+CATALINA_HOME -> path to tomcat8
