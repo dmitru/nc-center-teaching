@@ -34,7 +34,7 @@ public class WorkersCliTool {
                 + "add <name> [<manager id>] - add new worker\n"
                 + "rm <id> - delete worker and all it subworkers\n"
                 + "clear - remove all workers\n"
-                + "exit - quit the program"
+                + "exit - quit the program\n"
                 + "Have fun!");
         
         WorkerManager workerManager = new WorkerManagerImpl();

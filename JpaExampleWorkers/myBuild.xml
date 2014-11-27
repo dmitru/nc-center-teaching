@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JpaExampleWorkers" default="all" basedir=".">
+    <description>Example of how to build and run junit tests with Ant scripts</description>
+    
+    <property name="src" location="src"/>
+    <property name="test" location="test"/>
+    <property name="build" location="build"/>
+    <property name="build.test" location="build/test"/>
+    <property name="dist" location="dist"/>
+    <property name="lib" location="lib"/>
+    <property name="test.result" location="test_results"/>
+    
+    <path id="libs">
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="all" depends="clean,compile,run_tests"
+            description="cleans, builds and runs the tests">
+    </target>
+    
+    <target name="clean"
+            description="remove build directory">
+        <delete dir="${build}"/>
+        <delete dir="${build.test}"/>
+        <delete dir="${dist}"/>
+        <delete dir="${test.result}"/>
+    </target>
+    
+    <target name="mkdirs">
+        <mkdir dir="${build}"/>
+        <mkdir dir="${build.test}"/>
+        <mkdir dir="${dist}"/>
+        <mkdir dir="${test.result}"/>
+    </target>
+    
+    <target name="compile" depends="mkdirs"
+            description="compile the sources">
+        <javac srcdir="${src}" destdir="${build}">
+            <classpath refid="libs"/>
+        </javac>
+        <copy todir="${build}/META-INF">  
+            <fileset dir="${src}/META-INF"/>
+        </copy> 
+    </target>
+    
+    <target name="compile-tests" depends="compile"
+            description="compile the sources">
+        <javac srcdir="${test}" destdir="${build.test}">
+            <classpath>
+                <pathelement location="${build}"/>
+            </classpath>
+            <classpath refid="libs"/>
+        </javac>
+    </target>
+    
+    <target name="run_cli" depends="compile">
+        <java classname="com.example.workers.client.WorkersCliTool">
+            <classpath>
+                <pathelement location="${build}"/>
+            </classpath>
+            <classpath refid="libs"/>
+        </java>
+    </target>
+
+    <target name="run_tests" depends="compile-tests">
+        <!-- Run tests -->
+        <junit printsummary="yes" haltonfailure="yes">
+            <classpath>
+                <pathelement location="${build}"/>
+                <pathelement location="${build.test}"/>
+            </classpath>
+            <classpath refid="libs"/>
+
+            <batchtest fork="yes" todir="${test.result}">
+                <fileset dir="${test}">
+                    <include name="**/*Test*.java"/>
+                </fileset>
+                <formatter type="xml"/>
+            </batchtest>
+        </junit>
+        
+        <!-- Generate HTML report -->
+        <junitreport todir="${test.result}">
+            <fileset dir="${test.result}" includes="TEST-*.xml"/>
+            <report todir="${test.result}"/>
+        </junitreport>
+    </target>
+   
+</project>
